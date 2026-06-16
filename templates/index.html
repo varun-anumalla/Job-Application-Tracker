@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Job Application Tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h1>Job Application Tracker</h1>
+
+        <div class="stats">
+            Total Applications: {{ total }}
+        </div>
+
+        <a href="/add" class="btn">
+            Add Application
+        </a>
+    </div>
+
+    {% if applications %}
+
+        {% for app in applications %}
+
+        <div class="card">
+
+            <h2>{{ app.company_name }}</h2>
+
+            <p><strong>Role:</strong> {{ app.job_role }}</p>
+
+            <p><strong>Location:</strong> {{ app.location }}</p>
+
+            <p><strong>Salary:</strong> {{ app.salary }}</p>
+
+            <p><strong>Date:</strong> {{ app.applied_date }}</p>
+
+            <p><strong>Status:</strong> {{ app.status }}</p>
+
+            <p><strong>Notes:</strong> {{ app.notes }}</p>
+
+            <div class="actions">
+
+                <a href="/edit/{{ app.id }}" class="edit-btn">
+                    Edit
+                </a>
+
+                <a href="/delete/{{ app.id }}"
+                   class="delete-btn"
+                   onclick="return confirm('Delete this application?')">
+                    Delete
+                </a>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <div class="empty">
+            No applications found.
+        </div>
+
+    {% endif %}
+
+</div>
+
+</body>
+</html> 

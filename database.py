@@ -1,15 +1,21 @@
 import sqlite3
 
 
-def connect_db():
+def get_connection():
     conn = sqlite3.connect("tracker.db")
+    conn.row_factory = sqlite3.Row
+    return conn
+
+
+def initialize_database():
+    conn = get_connection()
     cursor = conn.cursor()
 
     cursor.execute("""
-    CREATE TABLE IF NOT EXISTS applications(
+    CREATE TABLE IF NOT EXISTS applications (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        company_name TEXT,
-        job_role TEXT,
+        company_name TEXT NOT NULL,
+        job_role TEXT NOT NULL,
         location TEXT,
         salary TEXT,
         applied_date TEXT,
@@ -19,5 +25,4 @@ def connect_db():
     """)
 
     conn.commit()
-
-    return conn, cursor
+    conn.close()
