@@ -10,15 +10,15 @@ This project helps job seekers organize, track, and manage their job application
 
 ## Dashboard
 
-(soon i will add )
+<img src="https://github.com/varun-anumalla/Job-Application-Tracker/blob/main/Screenshot%202026-06-17%20234912.png?raw=true" width="1000">
 
 ## Add Application Page
 
-(---)
+<img src="https://github.com/varun-anumalla/Job-Application-Tracker/blob/main/Screenshot%202026-06-17%20234933.png?raw=true" width="1000">
 
 ## Edit Application Page
 
-(---)
+<img src="https://github.com/varun-anumalla/Job-Application-Tracker/blob/main/Screenshot%202026-06-17%20234954.png?raw=true" width="1000">
 
 ---
 
@@ -26,7 +26,7 @@ This project helps job seekers organize, track, and manage their job application
 
 Watch Project Demo Video:
 
-[YouTube Video link]
+[YouTube Video link will be upload very soon]
 
 ---
 
