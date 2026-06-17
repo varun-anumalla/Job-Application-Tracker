@@ -8,6 +8,7 @@ def get_connection():
 
 
 def initialize_database():
+
     conn = get_connection()
     cursor = conn.cursor()
 
@@ -19,10 +20,22 @@ def initialize_database():
         location TEXT,
         salary TEXT,
         applied_date TEXT,
-        status TEXT,
+        status TEXT DEFAULT 'Wishlist',
+        job_url TEXT,
         notes TEXT
     )
     """)
 
     conn.commit()
+
+    # Add job_url column for old databases
+    try:
+        cursor.execute("""
+        ALTER TABLE applications
+        ADD COLUMN job_url TEXT
+        """)
+        conn.commit()
+    except:
+        pass
+
     conn.close()

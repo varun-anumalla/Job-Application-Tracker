@@ -1,72 +1,298 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Job Application Tracker</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
 </head>
+
+<script>
+window.addEventListener("beforeunload", function () {
+    localStorage.setItem("scrollPosition", window.scrollY);
+});
+
+window.addEventListener("load", function () {
+    const scrollPosition = localStorage.getItem("scrollPosition");
+
+    if (scrollPosition) {
+        window.scrollTo(0, parseInt(scrollPosition));
+    }
+});
+</script>
+
 <body>
 
-<div class="container">
+<div class="navbar">
 
-    <div class="header">
-        <h1>Job Application Tracker</h1>
+    <div class="logo-section">
 
-        <div class="stats">
-            Total Applications: {{ total }}
+        <div class="logo-circle">
+            🚀
         </div>
 
-        <a href="/add" class="btn">
-            Add Application
-        </a>
+        <div>
+            <h2>Job Application Tracker</h2>
+        </div>
+
     </div>
 
-    {% if applications %}
+    <div class="nav-actions">
 
-        {% for app in applications %}
+        <a href="/export" class="export-btn">
+            Export CSV
+        </a>
 
-        <div class="card">
+        <a href="/add" class="add-btn">
+            + Add Application
+        </a>
 
-            <h2>{{ app.company_name }}</h2>
+    </div>
 
-            <p><strong>Role:</strong> {{ app.job_role }}</p>
+</div>
 
-            <p><strong>Location:</strong> {{ app.location }}</p>
 
-            <p><strong>Salary:</strong> {{ app.salary }}</p>
+<div class="hero">
 
-            <p><strong>Date:</strong> {{ app.applied_date }}</p>
+    <span class="hero-tag">
+        Track Every Application
+    </span>
 
-            <p><strong>Status:</strong> {{ app.status }}</p>
+    <h1>
+        You're tracking {{ total }} applications
+    </h1>
 
-            <p><strong>Notes:</strong> {{ app.notes }}</p>
+    <p>
+        Organize your entire job search in one place.
+    </p>
 
-            <div class="actions">
+</div>
 
-                <a href="/edit/{{ app.id }}" class="edit-btn">
-                    Edit
-                </a>
 
-                <a href="/delete/{{ app.id }}"
-                   class="delete-btn"
-                   onclick="return confirm('Delete this application?')">
-                    Delete
-                </a>
+<div class="stats-grid">
+
+    <div class="stat-card">
+        <h2>{{ total }}</h2>
+        <p>Total</p>
+    </div>
+
+    <div class="stat-card">
+        <h2>{{ stats["Wishlist"] }}</h2>
+        <p>Wishlist</p>
+    </div>
+
+    <div class="stat-card">
+        <h2>{{ stats["Applied"] }}</h2>
+        <p>Applied</p>
+    </div>
+
+    <div class="stat-card">
+        <h2>{{ stats["Interview"] }}</h2>
+        <p>Interview</p>
+    </div>
+
+    <div class="stat-card">
+        <h2>{{ stats["Offer"] }}</h2>
+        <p>Offer</p>
+    </div>
+
+    <div class="stat-card">
+        <h2>{{ stats["Rejected"] }}</h2>
+        <p>Rejected</p>
+    </div>
+
+</div>
+
+
+<form method="GET" action="/" class="search-form">
+
+    <input
+        type="text"
+        name="q"
+        value="{{ search }}"
+        placeholder="Search company, role, location..."
+        class="search-box"
+    >
+
+    <button type="submit" class="search-btn">
+        Search
+    </button>
+
+</form>
+
+
+<div class="filter-chips">
+
+    <a href="/"
+       class="{% if status_filter == 'All' %}active-chip{% endif %}">
+        All
+    </a>
+
+    {% for status in statuses %}
+
+    <a href="/?status={{ status }}"
+       class="{% if status_filter == status %}active-chip{% endif %}">
+        {{ status }}
+    </a>
+
+    {% endfor %}
+
+</div>
+
+
+<div class="applications-section">
+
+{% if applications %}
+
+{% for app in applications %}
+
+<div class="application-card">
+
+    <div class="card-header">
+
+        <div class="company-info">
+
+            <div class="avatar">
+                {{ app.company_name[0]|upper }}
+            </div>
+
+            <div>
+
+                <h3>{{ app.job_role }}</h3>
+
+                <p class="company-name">
+                    {{ app.company_name }}
+                </p>
 
             </div>
 
         </div>
 
-        {% endfor %}
+    </div>
 
-    {% else %}
 
-        <div class="empty">
-            No applications found.
-        </div>
+    <div class="status-row">
+
+        <span class="status-badge {{ app.status|lower }}">
+            {{ app.status }}
+        </span>
+
+    </div>
+
+
+    <div class="card-details">
+
+        {% if app.location %}
+        <span>📍 {{ app.location }}</span>
+        {% endif %}
+
+        {% if app.salary %}
+        <span>💰 {{ app.salary }}</span>
+        {% endif %}
+
+        {% if app.applied_date %}
+        <span>📅 {{ app.applied_date }}</span>
+        {% endif %}
+
+    </div>
+
+
+    {% if app.notes %}
+
+    <div class="notes-box">
+        {{ app.notes }}
+    </div>
 
     {% endif %}
+
+
+    <form
+        action="/update_status/{{ app.id }}"
+        method="POST"
+        class="status-form"
+    >
+
+        <select
+            name="status"
+            onchange="this.form.submit()"
+        >
+
+            {% for status in statuses %}
+
+            <option
+                value="{{ status }}"
+                {% if status == app.status %}selected{% endif %}
+            >
+                {{ status }}
+            </option>
+
+            {% endfor %}
+
+        </select>
+
+    </form>
+
+
+    <div class="card-actions">
+
+        {% if app.job_url %}
+
+        <a
+            href="{{ app.job_url }}"
+            target="_blank"
+            class="job-link"
+        >
+            🔗 Open Job
+        </a>
+
+        {% else %}
+
+        <span class="job-link disabled-link">
+            No Link
+        </span>
+
+        {% endif %}
+
+        <a
+            href="/edit/{{ app.id }}"
+            class="edit-btn"
+        >
+            Edit
+        </a>
+
+        <a
+            href="/delete/{{ app.id }}"
+            class="delete-btn"
+            onclick="return confirm('Delete application?')"
+        >
+            Delete
+        </a>
+
+    </div>
+
+</div>
+
+{% endfor %}
+
+{% else %}
+
+<div class="empty-box">
+
+    <h2>No Applications Found</h2>
+
+    <p>
+        Add your first application and start tracking.
+    </p>
+
+</div>
+
+{% endif %}
 
 </div>
 
 </body>
-</html> 
+
+</html>

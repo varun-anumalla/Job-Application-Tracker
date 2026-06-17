@@ -2,26 +2,80 @@
 <html>
 <head>
     <title>Edit Application</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
 </head>
+
 <body>
 
 <div class="form-container">
 
     <h1>Edit Application</h1>
-
-    <h3>{{ application.company_name }}</h3>
-
+    
     <form method="POST">
 
+        <label>Company Name</label>
         <input
             type="text"
-            name="status"
-            value="{{ application.status }}"
+            name="company_name"
+            placeholder="Company Name"
+            value="{{ application.company_name }}"
+            required
         >
 
+        <label>Job Role</label>
+        <input
+            type="text"
+            name="job_role"
+            placeholder="Job Role"
+            value="{{ application.job_role }}"
+            required
+        >
+
+        <label>Location</label>
+        <input
+            type="text"
+            name="location"
+            placeholder="Location"
+            value="{{ application.location }}"
+        >
+
+        <label>Salary</label>
+        <input
+            type="text"
+            name="salary"
+            placeholder="Salary"
+            value="{{ application.salary }}"
+        >
+
+        <label>Applied Date</label>
+        <input
+            type="date"
+            name="applied_date"
+            value="{{ application.applied_date }}"
+        >
+
+        <label>Status</label>
+        <select name="status">
+
+            {% for status in statuses %}
+
+            <option
+                value="{{ status }}"
+                {% if application.status == status %}selected{% endif %}
+            >
+                {{ status }}
+            </option>
+
+            {% endfor %}
+
+        </select>
+
+        <label>Notes</label>
         <textarea
             name="notes"
+            placeholder="Add notes about this application..."
         >{{ application.notes }}</textarea>
 
         <button type="submit">
@@ -30,7 +84,11 @@
 
     </form>
 
-    <a href="/">Back</a>
+    <br>
+
+    <a href="/" class="add-btn">
+        Back To Dashboard
+    </a>
 
 </div>
 
